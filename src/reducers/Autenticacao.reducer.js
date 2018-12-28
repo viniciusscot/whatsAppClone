@@ -1,8 +1,27 @@
 const INITIAL_STATE = {
-    nome: '',
-    email: '',
-    senha: ''
-}
+  nome: "",
+  email: "",
+  senha: "",
+  erroCadastro: ""
+};
 export default (state = INITIAL_STATE, action) => {
-    return state;
-}
+  switch (action.type) {
+    case "modifica_email":
+      return { ...state, email: action.payload };
+
+    case "modifica_senha":
+      return { ...state, senha: action.payload };
+
+    case "modifica_nome":
+      return { ...state, nome: action.payload };
+
+    case "cadastro_usuario_erro":
+      return { ...state, erroCadastro: action.payload };
+
+    case "cadastro_usuario_sucesso":
+      return { ...state, nome: "", senha: "", erroCadastro: "" };
+
+    default:
+      return state;
+  }
+};
