@@ -5,7 +5,8 @@ import {
   TextInput,
   Button,
   Text,
-  ImageBackground
+  ImageBackground,
+  ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -21,6 +22,18 @@ class formCadastro extends Component {
     const { nome, email, senha } = this.props;
 
     this.props.cadastraUsuario({ nome, email, senha });
+  };
+
+  renderBtnCadastro = () => {
+    if (this.props.loading_cadastro) return <ActivityIndicator size="large" />;
+
+    return (
+      <Button
+        title="Cadastrar"
+        color="#115E54"
+        onPress={() => this._cadastraUsuario()}
+      />
+    );
   };
 
   render() {
@@ -57,13 +70,7 @@ class formCadastro extends Component {
               {this.props.erroCadastro}
             </Text>
           </View>
-          <View style={styles.box2}>
-            <Button
-              title="Cadastrar"
-              color="#115E54"
-              onPress={() => this._cadastraUsuario()}
-            />
-          </View>
+          <View style={styles.box2}>{this.renderBtnCadastro()}</View>
         </View>
       </ImageBackground>
     );
@@ -74,7 +81,8 @@ const mapStateToProps = state => ({
   nome: state.AutenticacaoReducer.nome,
   email: state.AutenticacaoReducer.email,
   senha: state.AutenticacaoReducer.senha,
-  erroCadastro: state.AutenticacaoReducer.erroCadastro
+  erroCadastro: state.AutenticacaoReducer.erroCadastro,
+  loading_cadastro: state.AutenticacaoReducer.loading_cadastro
 });
 
 export default connect(

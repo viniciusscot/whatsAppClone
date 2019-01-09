@@ -3,30 +3,43 @@ import "@firebase/auth";
 import "@firebase/database";
 import { Actions } from "react-native-router-flux";
 import b64 from "base-64";
+import {
+  MODIFICA_SENHA,
+  MODIFICA_NOME,
+  MODIFICA_EMAIL,
+  LOGIN_USUARIO_SUCESSO,
+  LOGIN_USUARIO_ERRO,
+  CADASTRO_USUARIO_SUCESSO,
+  CADASTRO_USUARIO_ERRO,
+  LOGIN_EM_ANDAMENTO,
+  CADASTRO_EM_ANDAMENTO
+} from "./types";
 
 export const modificaEmail = payload => {
   return {
-    type: "modifica_email",
+    type: MODIFICA_EMAIL,
     payload
   };
 };
 
 export const modificaSenha = payload => {
   return {
-    type: "modifica_senha",
+    type: MODIFICA_SENHA,
     payload
   };
 };
 
 export const modificaNome = payload => {
   return {
-    type: "modifica_nome",
+    type: MODIFICA_NOME,
     payload
   };
 };
 
 export const cadastraUsuario = ({ nome, email, senha }) => {
   return dispatch => {
+    dispatch({ type: CADASTRO_EM_ANDAMENTO });
+
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, senha)
@@ -48,22 +61,31 @@ export const cadastraUsuario = ({ nome, email, senha }) => {
 };
 
 const cadastroUsuarioSucesso = dispatch => {
-  dispatch({ type: "cadastro_usuario_sucesso" });
+  dispatch({ type: CADASTRO_USUARIO_SUCESSO });
 
   Actions.boasVindas();
 };
 
 const cadastroUsuarioErro = (erro, dispatch) => {
-  dispatch({ type: "cadastro_usuario_erro", payload: erro.message });
+  dispatch({ type: CADASTRO_USUARIO_ERRO, payload: erro.message });
 };
 
-export const autenticarUsuario = user => {
+export const autenticarUsuario = ({ email, senha }) => {
   return dispatch => {
+    dispatch({ type: LOGIN_EM_ANDAMENTO });
     firebase
       .auth()
-      .signInWithEmailAndPassword(...user)
-      .then()
-      .catch();
+      .signInWithEmailAndPassword(email, senha)
+      .then(value => loginUsuarioSucesso(dispatch))
+      .catch(erro => loginUsuarioErro(erro, dispatch));
   };
-  dispatch({ type: "teste" });
+};
+
+const loginUsuarioSucesso = dispatch => {
+  dispatch({ type: LOGIN_USUARIO_SUCESSO });
+  Actions.principal();
+};
+
+const loginUsuarioErro = (erro, dispatch) => {
+  dispatch({ type: LOGIN_USUARIO_ERRO, payload: erro.message });
 };

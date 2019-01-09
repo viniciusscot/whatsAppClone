@@ -6,7 +6,8 @@ import {
   TextInput,
   Button,
   TouchableHighlight,
-  ImageBackground
+  ImageBackground,
+  ActivityIndicator
 } from "react-native";
 import { Actions } from "react-native-router-flux";
 import { connect } from "react-redux";
@@ -21,6 +22,18 @@ class formLogin extends Component {
     const { email, senha } = this.props;
 
     this.props.autenticarUsuario({ email, senha });
+  };
+
+  renderBtnAcessar = () => {
+    if (this.props.loading_login) return <ActivityIndicator size="large" />;
+
+    return (
+      <Button
+        title="acessar"
+        color="#115E54"
+        onPress={() => this._autenticarUsuario()}
+      />
+    );
   };
 
   render() {
@@ -49,6 +62,9 @@ class formLogin extends Component {
               placeholderTextColor="#fff"
               onChangeText={texto => this.props.modificaSenha(texto)}
             />
+            <Text style={{ color: "#ff0000", fontSize: 18 }}>
+              {this.props.erroLogin}
+            </Text>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontSize: 20, color: "#fff" }}>
                 {"Ainda não tem cadastro? "}
@@ -60,13 +76,7 @@ class formLogin extends Component {
               </TouchableHighlight>
             </View>
           </View>
-          <View style={styles.box2}>
-            <Button
-              title="acessar"
-              color="#115E54"
-              onPress={() => this._autenticarUsuario()}
-            />
-          </View>
+          <View style={styles.box2}>{this.renderBtnAcessar()}</View>
         </View>
       </ImageBackground>
     );
@@ -75,7 +85,9 @@ class formLogin extends Component {
 
 const mapStateToProsps = state => ({
   email: state.AutenticacaoReducer.email,
-  senha: state.AutenticacaoReducer.senha
+  senha: state.AutenticacaoReducer.senha,
+  erroLogin: state.AutenticacaoReducer.erroLogin,
+  loading_login: state.AutenticacaoReducer.loading_login
 });
 
 export default connect(
